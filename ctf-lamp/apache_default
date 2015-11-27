@@ -1,0 +1,52 @@
+<VirtualHost *:80>
+  ServerName yourdomain.com
+  Redirect permanent / https://yourdomain.com/
+</VirtualHost>
+
+<IfModule mod_ssl.c>
+<VirtualHost *:443>
+
+   ServerAdmin contact@yourdomain.com
+   ServerName yourdomain.com
+   DocumentRoot /var/www/html/
+
+   <Directory />
+      Order Deny,Allow
+      Deny from all
+      AllowOverride None
+   </Directory>
+
+   <Directory "/var/www/html/">
+      Options -Indexes +MultiViews
+      AllowOverride None
+      Order Deny,Allow
+      Allow from all
+      AddType application/x-httpd-php .php
+   </Directory>
+
+   # error log
+   ErrorLog /var/log/apache2/ctf-error.log
+   LogLevel warn
+
+   # access log
+   CustomLog /var/log/apache2/ctf-access.log combined
+
+   # ssl
+   SSLEngine on
+   SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
+   SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+
+   <FilesMatch "\.(cgi|shtml|phtml|php)$">
+      SSLOptions +StdEnvVars
+   </FilesMatch>
+   <Directory /usr/lib/cgi-bin>
+      SSLOptions +StdEnvVars
+   </Directory>
+
+   BrowserMatch "MSIE [2-6]" \
+      nokeepalive ssl-unclean-shutdown \
+      downgrade-1.0 force-response-1.0
+   BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+
+</VirtualHost>
+</IfModule>

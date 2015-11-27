@@ -1,0 +1,5 @@
+lamp:
+  image: ctf/lamp
+  ports:
+    - 80:80
+    - 3306:3306
